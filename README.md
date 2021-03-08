@@ -37,6 +37,12 @@ load "sdtools"      <-- This is a standalone Comal program that have USE SDTOOLS
 
 makeobjfile.prg     <-- This file will create a SEQ package file (that you need if you compile this yourself EQ fb64comal >> pkg.sdtools), simply load and run from comal, enter the file (EQ fb64comal created from above) and output file >> whatever you want to call it. Traditionally all Comal Packages were formated with PKG. in front.
 
+03/08/2021
+
+-- Deletes all non-C64 files, routines. Not needed since comal is not avaliable on these systems.
+
+
+
 
 I still need to find a correct loader solution, I have tried all Comal file loader routines and none work? They work for machine language programs, but not actual Comal programs.
 
