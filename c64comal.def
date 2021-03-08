@@ -2,16 +2,12 @@
 
 ; - CBM target system
 target = 64	; choose the target system
-		; 20 = Commodore VIC-20
 		; 64 = Commodore 64
-		; 16 = The Commodore 264 Series (C16, C116, plus/4) 
-		;128 = Commodore 128 (Not implemented yet)
+		
 
 		; Select a variant according with target system 
 variant = 3     ; 0 = None, Standard System.
-                ; 1 = Vic-20 with Mega-Cart
-                ; 2 = C64 Direct-to-TV
-				; 3 = COMAL 80 C64
+                ; 3 = COMAL 80 C64
 
                 ; device number 
 hwdevicenum = 0 ; a device number, 0 = autodetect.
@@ -63,7 +59,7 @@ rememberpos = 1	    ; remember position on previous directory
 showcursors = 1     ; show cursors
 clearscrena = 1     ; enable screen clearing & color setting
 fastscrolle = 1     ; enable fast list scrolling
-colorenable = 1     ; enable colors
+colorenable = 0     ; enable colors
 disknameena = 1     ; enable disk name printing
 statusenabl = 1     ; enable status printing
 pleasewaite = 1     ; enable "please wait" printing
