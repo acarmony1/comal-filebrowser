@@ -37,7 +37,7 @@ PLOT = $fff0            ; x<->y
 
 !if target = 64 & variant != 3 {
 PRNINT  = $bdcd     ; print integer in A/X
-PRNSTR  = $ab1e     ; print string in A/Y, 0 terminated
+prnstr  = $ab1e     ; print string in A/Y, 0 terminated
 CLEARSCREEN = $e544
 SHFLAG =  $28d      ; ($00 = None, $01 = Shift, $02 = CBM, $04 = CTRL or a sum of them). 
 
@@ -51,7 +51,7 @@ SCRTCHF = $a644     ; scrtch Perform [new] FORCED and return
 !if target = 64 & variant = 3 {
 
 ;PRNINT  = $bdcd     ; print integer in A/X
-;PRNSTR  = $ab1e     ; print string in A/Y, 0 terminated (NOT IN COMAL USE OUR OWN)
+;prnstr  = $ab1e     ; print string in A/Y, 0 terminated (NOT IN COMAL USE OUR OWN)
 CLEARSCREEN = $e544
 SHFLAG =  $28d      ; ($00 = None, $01 = Shift, $02 = CBM, $04 = CTRL or a sum of them). 
 
@@ -64,43 +64,40 @@ CHKOUT 	= $ffc9
 } 
 
 
-!if target = 64 {
+
 LISTN   = $ffb1     ; Command Serial Bus LISTEN
 UNLSN   = $ffae     ; Command Serial Bus UNLISTEN
-}
+
 
 
 ; --------------------
 ; - hw addresses
 ; --------------------
 
-!if target = 64 {
 screen = $0400          ; screen address
 color = $d800           ; color ram address
 vicborder = $d020       ; border color register
 vicbackgnd = $d021      ; background color register
 vicraster = $d012       ; raster compare register
-}
+
 
 ;common for C64/Vic20/C16
-	basicstartaddress_lo = $2b ;Pointer: Start of Basic lo byte
-	basicstartaddress_hi = $2c ;Pointer: Start of Basic hi byte
-	variablesstartaddress_lo = $2d ;Pointer: Start of Basic lo byte
-	variablesstartaddress_hi = $2e ;Pointer: Start of Basic hi byte
+basicstartaddress_lo = $2b ;Pointer: Start of Basic lo byte
+basicstartaddress_hi = $2c ;Pointer: Start of Basic hi byte
+variablesstartaddress_lo = $2d ;Pointer: Start of Basic lo byte
+variablesstartaddress_hi = $2e ;Pointer: Start of Basic hi byte
 
 status_word_st = $90    ; Status word ST 
 
-!if target = 64 {
 keybuf = $0277          ; keyboard buffer
 keybuflen = $00c6         ; keyboard buffer byte count
 lastdevice = $ba        ; last used device number
-}
+
 
 ; --------------------
 ; - Zero page variables
 ; --------------------
 
-!if target = 64 {
 
 ; current joystick state (1 = falling edge)
 curjoy = $22
@@ -129,9 +126,6 @@ disknamepetlen = $29
 prevdirpos  = $57
 prevdirposh = $58
 }
-}
-
-!if target = 64 {
 
 ; - pointer to selected entry
 selected  = $fb
@@ -140,7 +134,7 @@ selectedh = $fc
 ; - temp pointer
 tmpptr = $fd
 tmpptrh = $fe
-}
+
 
 ; --------------------
 ; - Miscellaneus
@@ -163,21 +157,25 @@ entry:
 
 !if target = 64 & variant = 3 {
 
+; comal start
+
 !if rom = 1 {
 
 rommed =$0010
+
 } else {
 
 rommed = 0
 
 }
 
+
+
 ; comal zp
 
-textlo = $49
-texthi = $4a
+txtlo = $49
+txthi = $4a
 
-; comal start
 ; comal system locations
 
 comal =$ca30
@@ -186,6 +184,9 @@ defpag =$0046
 endprc =$007e  
 proc =$0070 
 kbuf = $0277
+link = 2
+value    =  114
+str      =  2
 
 ; start of program
 
@@ -197,23 +198,25 @@ entry:
 ;	init
 ;
 
- !byte defpag+rommed ;52kb ram memory map=(and rommed) cannot discard
+map !byte defpag+rommed ;52kb ram memory map=(and rommed) cannot discard
  !word end ;modulee end state
- !word dummy ; signal-handler
+ !word init ; signal-handler
  
 ;
 ;  package label
 ;
- !tx 7,"sdtools" ;package header 'sdtools'
- !word sdtools ;procedure header
- !word dummy ; signal
- !byte 0 ;end table
+packlabel !tx 7,"sdtools" ;package header 'sdtools'
+prochead !word sdtools ;procedure header
+signal !word dummy ; signal
+!byte 0 ;end table
  
 ;
 ;  procedure table
 ;
 sdtools !tx 2,"fb" ;procedure 'fb'
  !word fb ;procedure location
+ !tx 2,"go"    ;PROCEDURE NAME
+ !word go
  !byte 0
  
 ;
@@ -221,8 +224,148 @@ sdtools !tx 2,"fb" ;procedure 'fb'
 ;
 fb !byte proc,<mlcodeentry,>mlcodeentry,0 
  !byte endprc
- 
+
+
+go   !byte proc,lo,hi,1
+       !byte value+str,endprc
+adres    =  *
+lo       =  <adres
+hi       =  >adres
+       lda  #$01
+       jsr  $c896
+       ldy  #$02
+       lda  ($45),y
+       bne  argerr
+       iny
+       lda  ($45),y
+       beq  argerr
+       cmp  #$11
+       bcc  ok
+argerr ldx  #$01
+       jmp  $c9fb
+ok     sta  eind
+       ldx  #$00
+       iny
+name   lda  ($45),y
+       sta  eind+1,x
+       inx
+       iny
+       cpx  eind
+       bcc  name
+       sei  
+       lda  #$37
+       sta  $01
+       ldx  #$e0
+       ldy  #$07
+       lda  #$00
+port   sta  $df00,y
+       dey  
+       bpl  port
+       stx  $de00
+       stx  $8008
+       ldx  #$ff
+       txs
+       cld
+       jsr  $fda3
+       jsr  $fd50
+       jsr  $fd15
+       jsr  $ff5b
+       cli
+       jsr  $e453
+       jsr  $e3bf
+       jsr  $e422
+       ldx  #$fb
+       txs
+       lda  #<nmi
+       ldy  #>nmi
+       sta  $0318
+       sty  $0319
+       lda  #<back
+       ldy  #>back
+       sta  $0302
+       sty  $0303
+       lda  #$80
+       sta  $9d
+       lda  eind
+       ldx  #<na
+       ldy  #>na
+       jsr  SETNAM
+       ldx  #$08
+       ldy  #$ff
+       jsr  SETLFS
+       lda  #$00
+       ldx  $2b
+       ldy  $2c
+       jsr  LOAD
+       bcc  noerr
+       jmp  $e0f9
+noerr  lda  $90
+       and  #$bf
+       beq  nolerr
+       jmp  $e19c
+nolerr stx  $2d
+       sty  $2e
+       lda  #$02
+       ldx  #<com
+       ldy  #>com
+       jsr  SETNAM
+       lda  #$01
+       ldx  #$08
+       ldy  #$6f
+       jsr  SETLFS
+       jsr  OPEN
+       jsr  $a533
+       lda  #$00
+       sta  $9d
+       jsr  $a659
+       lda  #$0d
+       jsr  CHROUT
+       jmp  $a7ae
+nmi
+       ldx  #$80
+       ldy  #$00
+wait   dey
+       bne  wait
+       dex
+       bne  wait
+back   lda  #$37
+       sta  $01
+       ldx  #$80
+       ldy  #$07
+       lda  #$00
+labe   sta  $df00,y
+       dey
+       bpl  labe
+       lda  #$8e
+       sta  $033c
+       lda  #$00
+       sta  $033d
+       lda  #$de
+       sta  $033e
+       lda  #$6c
+       sta  $033f
+       lda  #$fc
+       sta  $0340
+       lda  #$ff
+       sta  $0341
+       jmp  $033c
+com    !byte 85,73
+eind    =   *
+na      =   eind+1
+       !byte 0,0,0,0,0,0,0,0
+       !byte 0,0,0,0,0,0,0,0
+	   
+	   
+init cpy #link
+bne init1
+lda #<version
+ldy #>version
+jsr prnstr
+
+init1 rts
+
 }
+
 }
 
 mlcodeentry:
@@ -307,7 +450,7 @@ jsr PLOT         ; set cursor position
 
 ldy #>quit_text  ; string start point hi-byte
 lda #<quit_text  ; string start point lo-byte
-jsr PRNSTR       ; print string in A/Y, 0 terminated
+jsr prnstr       ; print string in A/Y, 0 terminated
 
 }
 
@@ -330,7 +473,7 @@ jsr PLOT           ; set cursor position
 
 ldy #>drive_text   ; string start point hi-byte
 lda #<drive_text   ; string start point lo-byte
-jsr PRNSTR       ; print string in A/Y, 0 terminated
+jsr prnstr       ; print string in A/Y, 0 terminated
 
 jsr PrintDriveNr
 
@@ -779,7 +922,7 @@ lda #<sortOFF_text
 ldy #>sortOFF_text
 
 PrintSortString:
-jsr PRNSTR
+jsr prnstr
 
 rts
 }
@@ -1031,14 +1174,21 @@ sei
 
 ldy #$00
 
-main lda loadtext,y	; print to screen "LOAD" + quote
-beq +
-jsr CHROUT
-iny
-cpy #loadtextlen
-bne main
+lda #<loadtext
+ldy #>loadtext
+jsr prnstr
+;main lda loadtext,y	; print to screen "LOAD" + quote
+;beq +
+;jsr CHROUT
+;iny
+;cpy #loadtextlen
+;bne main
 
-+ ldy #0
+;+ ldy #0
+
+;lda #<selected
+;ldy #>selected
+;jsr prnstr
 
 main1 lda (selected),y	; print to screen filename
 beq +
@@ -1049,11 +1199,15 @@ bne main1
 
 + ldy #0
 
-main2 lda runtext,y	; store remainder in keyboard buffer
-sta kbuf,y			; send text to keyboard buffer
-iny
-cpy #runtextlen
-bne main2
+lda #<runtext
+ldy #>runtext
+jsr kbuffr
+
+;main2 lda runtext,y	; store remainder in keyboard buffer
+;sta kbuf,y			; send text to keyboard buffer
+;iny
+;cpy #runtextlen
+;bne main2
 
 cli
 
@@ -1168,27 +1322,45 @@ loadrunend  ; end of code to copy
 !if target = 64 & variant = 3 { 
 ; print integer & print string for COMAL
 
-PRNINT: lda device
+PRNINT lda device
 ora #$30
 jsr CHROUT
 
 rts
 
-PRNSTR:
-	sta textlo
-	sty texthi
+prnstr
+	sta txtlo
+	sty txthi
 	ldy #0
-pstrlp:
-	lda (textlo),y
+pstrlp
+	lda (txtlo),y
 	beq pstrex
 	jsr CHROUT
 	iny
 	bne pstrlp
-pstrex:
+pstrex
 	lda #0
 	ldy #0
 	ldx #0
 	rts
+
+kbuffr
+	sta txtlo
+	sty txthi
+	ldy #0
+kbuffrlp
+	lda (txtlo),y
+	beq kbuffrex
+	sta kbuf,y
+	iny
+	bne kbuffrlp
+kbuffrex
+	lda #0
+	ldy #0
+	ldx #0
+	rts
+	
+
 }
 
 ; - nextpage
@@ -2443,10 +2615,20 @@ sortON_text:
 
 !if target = 64 & variant = 3 {
 
+;inittxt !tx $0d, "DEFKEY(4,", $22, "USE SDTOOLS", $22, "13", $22, $22, ")", 0
+
+version !tx "SDTOOLS by John Carmony, V.03",0
+
+setunit0 !tx "unit$ ", $22, "0:",0
+setunit1 !tx "unit$ ", $22, "1:",0
+
 loadtext !tx "load", $22,0
 loadtextlen =*-loadtext
 
-runtext !tx $22, $0d, "RUN", $0d
+rettxt !tx " ", $0d,0
+rettxtlen =*-rettxt
+
+runtext !tx $22, $0d, "RUN", $0d,0
 runtextlen =*-runtext
 
 }

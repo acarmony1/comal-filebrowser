@@ -64,7 +64,7 @@ disknameena = 1     ; enable disk name printing
 statusenabl = 1     ; enable status printing
 pleasewaite = 1     ; enable "please wait" printing
 sortdir     = 1     ; enable sort dir function by using the key_sort
-rom			= 1		; enable rommed version for comal
+rom			= 0		; enable rommed version for comal
 }
 
 
