@@ -10,12 +10,6 @@ echo          º Select system:                  º
 echo          º -----------------               º 
 echo          º 1 - C64                         º 
 echo          º 2 - C64 Comal                   º   
-echo          º 3 - Vic20 unexpanded            º
-echo          º 4 - Vic20 +3k ram               º
-echo          º 5 - Vic20 +8k ram or plus       º
-echo          º 6 - Vic20 with Mega-Cart        º
-echo          º 7 - C16/C116/Plus4 (264 series) º
-echo          º 8 - C128                        º
 echo          º                                 º
 echo          º 0 - quit                        º
 echo          º                                 º 
@@ -26,12 +20,7 @@ set /p system=           System:
 
 if "%system%"=="1" goto system1
 if "%system%"=="2" goto system2
-if "%system%"=="3" goto system3
-if "%system%"=="4" goto system4
-if "%system%"=="5" goto system5
-if "%system%"=="6" goto system6
-if "%system%"=="7" goto system7
-if "%system%"=="8" goto system8
+
 if "%system%"=="0" goto quit
 goto menu
 
@@ -78,193 +67,19 @@ echo.
 echo Compiling CBM FileBrowser for: 
 echo 2 - C64 Comal
 echo.
-echo acme --cpu 6502 -f cbm -o fb64comal.prg c64comal.asm
+echo acme --cpu 6502 -f cbm -o sdtools-comal.prg c64comal.asm
 echo.
 
-acme --cpu 6502 -f cbm -o fb64comal.prg c64comal.asm
+acme --cpu 6502 -f cbm -o sdtools-comal.prg c64sdtools.asm
 
 if not %errorlevel%==0 goto :error
 
-echo done, launching program (fb64comal.prg).
+echo done, launching program (.prg).
 echo.
-fb64comal.prg 
+sdtools-comal.prg 
 
 pause
 exit
-
-
-
-
-
-
-:system3
-
-rem ************************************************
-rem * Commodore Vic20 unexpanded (vic20-unexp.asm) *
-rem ************************************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 3 - Vic20 unexpanded
-echo.
-echo acme --cpu 6502 -f cbm -o fb20.prg vic20-unexp.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb20.prg vic20-unexp.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb20.prg).
-echo.
-fb20.prg 
-
-pause
-exit
-
-
-
-
-
-
-:system4
-
-rem ******************************************
-rem * Commodore Vic20 +3k ram (vic20-3k.asm) *
-rem ******************************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 4 - Vic20 +3k ram
-echo.
-echo acme --cpu 6502 -f cbm -o fb20-3k.prg vic20-3k.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb20-3k.prg vic20-3k.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb20-3k.prg).
-echo.
-fb20-3k.prg
-
-pause
-exit
-
-
-
-
-
-
-:system5
-
-rem **************************************************
-rem * Commodore Vic20 +8k ram or plus (vic20-8k.asm) *
-rem **************************************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 5 - Vic20 +8k ram or plus
-echo.
-echo acme --cpu 6502 -f cbm -o fb20-8k.prg vic20-8k.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb20-8k.prg vic20-8k.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb20-8k.prg).
-echo.
-fb20-8k.prg
-
-pause
-exit
-
-
-
-
-
-:system6
-
-rem *************************************************
-rem * Commodore Vic20 with Mega-Cart (vic20-mc.asm) *
-rem *************************************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 6 - Vic20 with Mega-Cart
-echo.
-echo acme --cpu 6502 -f cbm -o fb20-mc.prg vic20-mc.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb20-mc.prg vic20-mc.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb20-mc.prg).
-echo.
-fb20-mc.prg
-
-pause
-exit
-
-
-:system7
-
-rem ************************************************
-rem * Commodore 264 series C16/C116/Plus4 (c16.asm)*
-rem ************************************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 7 - C16/C116/+4 (264 series)
-echo.
-echo acme --cpu 6502 -f cbm -o fb16.prg c16.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb16.prg c16.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb16.prg).
-echo.
-fb16.prg 
-
-pause
-exit
-
-
-
-:system8
-
-rem ****************************
-rem * Commodore 128 (c128.asm) *
-rem ****************************
-
-cls
-echo.
-echo Compiling CBM FileBrowser for: 
-echo 8 - C128
-echo.
-echo acme --cpu 6502 -f cbm -o fb128.prg c128.asm
-echo.
-
-acme --cpu 6502 -f cbm -o fb128.prg c128.asm
-
-if not %errorlevel%==0 goto :error
-
-echo done, launching program (fb128.prg).
-echo.
-fb128.prg
-
-pause
-exit
-
-
 
 :error
 echo.
