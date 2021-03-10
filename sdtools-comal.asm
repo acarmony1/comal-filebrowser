@@ -217,6 +217,8 @@ sdtools !tx 2,"fb" ;procedure 'fb'
  !word fb ;procedure location
  !tx 2,"go"    ;PROCEDURE NAME
  !word go
+ !tx 4,"help"
+ !word help
  !byte 0
  
 ;
@@ -355,6 +357,17 @@ na      =   eind+1
        !byte 0,0,0,0,0,0,0,0
        !byte 0,0,0,0,0,0,0,0
 	   
+
+help	!byte proc, <help1,>help1,0
+		!byte endprc
+help1	lda #<version
+		ldy #>version
+		jsr prnstr
+	
+		lda #<helpt
+		ldy #>helpt
+		jsr prnstr
+		rts	   
 	   
 init cpy #link
 bne init1
@@ -2613,11 +2626,19 @@ sortON_text:
 }
 
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 ;inittxt !tx $0d, "DEFKEY(4,", $22, "USE SDTOOLS", $22, "13", $22, $22, ")", 0
 
-version !tx "SDTOOLS by John Carmony, V.03",0
+version !tx $0d,"SDTOOLS by John Carmony, V.03", $0d,0
+
+helpt	!tx $0d, $0d, "After 'linking' use 'USE sdtools'", $0d
+		!tx "Then simply use 'fb' to enter",$0d 
+		!tx "the filebrowser. You must use ",$0d
+		!tx "'USE sdtools' after running or ",$0d
+		!tx "using another package",$0d,$0d
+		!tx "To use the 'go' feature, simply", $0d
+		!tx "enter 'go (",$22,"basicfilename",$22,")'", $0d,$0d,0
 
 setunit0 !tx "unit$ ", $22, "0:",0
 setunit1 !tx "unit$ ", $22, "1:",0
