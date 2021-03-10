@@ -37,6 +37,17 @@ load "sdtools"      <-- This is a standalone Comal program that have USE SDTOOLS
 
 makeobjfile.prg     <-- This file will create a SEQ package file (that you need if you compile this yourself EQ fb64comal >> pkg.sdtools), simply load and run from comal, enter the file (EQ fb64comal created from above) and output file >> whatever you want to call it. Traditionally all Comal Packages were formated with PKG. in front.
 
+.3/09/2021
+
+Added version, (currently V.03). Fixed the color  to normal colors (colorenable = 0)
+
+Added "GO" command. This command will run a regular C64 Basic file and when finished on exit will return to Comal.  This Came from Dutch authors in the COmal Today Magazine (Comal Today #8, pg 75).. Uknown original authors.
+
+USE:
+
+go("basicfilename")  << will exit to BASIC and once finished will return to Comal.
+
+
 03/08/2021
 
 -- Deletes all non-C64 files, routines. Not needed since comal is not avaliable on these systems.
