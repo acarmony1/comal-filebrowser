@@ -35,7 +35,7 @@ PLOT = $fff0            ; x<->y
 
 
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 PRNINT  = $bdcd     ; print integer in A/X
 prnstr  = $ab1e     ; print string in A/Y, 0 terminated
 CLEARSCREEN = $e544
@@ -48,7 +48,7 @@ SCRTCHF = $a644     ; scrtch Perform [new] FORCED and return
 
 }
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 ;PRNINT  = $bdcd     ; print integer in A/X
 ;prnstr  = $ab1e     ; print string in A/Y, 0 terminated (NOT IN COMAL USE OUR OWN)
@@ -146,7 +146,7 @@ tmpptrh = $fe
 
 ; start of program
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 *=$0801
 
 entry:
@@ -155,19 +155,19 @@ entry:
 
 } else {
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 ; comal start
 
-!if rom = 1 {
+;!if rom = 1 {
 
-rommed =$0010
+rommed = $0000
 
-} else {
+;} else {
 
-rommed = 0
+;rommed = 0
 
-}
+;}
 
 
 
@@ -643,10 +643,10 @@ ldy #0          ; reset joyrepeat counter
 lda #$ff        ; reset lastjoy for repeat
 sta lastjoy
 
-!if target = 64 {
+
 ; read joystick
 + lda joyport   ; a = joy
-}
+
 
 
 ;c64 joy bit switches structure:
@@ -736,7 +736,7 @@ jmp menu
 bne ++              ; jump if not
 jmp loadprev        ; load prev dir
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 ++ cpx #key_quit    ; check if key_quit
 bne ++              ; jump if not
 
@@ -747,7 +747,7 @@ bne ++              ; jump if not
 }
 
 
-!if target = 64 and variant = 3 {
+!if variant = 3 {
 
 ++ cpx #key_quit    ; check if key_quit
 bne ++
@@ -757,14 +757,14 @@ jmp comal
 
 }
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 ++ cpx #key_reset
 bne ++              ; jump if not
 ;jmp $FCE2           ; Reset the C64 SYS64738
 jmp ($fffc)			;reset CPU
 }
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 ++ cpx #key_reset
 bne ++  
@@ -1112,7 +1112,6 @@ ldy #>tapname
 lda disknamepetlen
 jsr openclose
 
-!if target = 64 {
 
 ldx #$ff
 sei
@@ -1140,14 +1139,14 @@ sta $c6
 
 JMP $A7AE    ; BASIC Warm Start (RUN)
 
-}
+
 
 +
 }
 
 
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 
 !if startmode = 0 {
 ;old method,  LOAD"FILE",8,1 + (System auto RUN)
@@ -1177,7 +1176,7 @@ ldx device    ; unitnr
 }
 }
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 ; comal load
 
@@ -1231,7 +1230,7 @@ jmp comal
 
 }
 
-!if target = 64 & variant != 3 {
+!if variant != 3 {
 
 jsr SETLFS
 lda disknamepetlen  ; a = filenamelen
@@ -1260,6 +1259,7 @@ loadrunstart    ; start of code to copy
 ; load program
 ;
 lda #0      ; a = 0: load
+sta #$9d
 
 !if startmode = 1 {
                           ;Load start address used only in RUN start mode (sec.address (,0) on SETLFS)
@@ -1332,7 +1332,7 @@ loadrunend  ; end of code to copy
 
 ; --- Subroutines
 
-!if target = 64 & variant = 3 { 
+!if variant = 3 { 
 ; print integer & print string for COMAL
 
 PRNINT lda device
@@ -1788,14 +1788,7 @@ scrolldown:
 lda menustate
 and #$f0
 sta menustate
-!if target = 128 {
-	jsr PreScroll	;set window for scrolling
-	jsr $ff7d	;Print Immediate
-	!by $1d, $13	;right, home (fix pointers)
-	!by $1b, $56	;ESC, V (scroll up)
-	!by $13, $13	;home, home (restore full screen)
-	!by 0		;end of string
-} else {
+
 lda #<screen+(listtopy+1)*ScreenCols+listx
 sta scrolldownll
 lda #>screen+(listtopy+1)*ScreenCols+listx
@@ -1827,7 +1820,7 @@ adc #0
 sta scrolldownlh
 dex
 bne --
-}
+
 jsr scrollcheckend      ; check if end
 lda menustate
 and #2
@@ -1861,14 +1854,7 @@ scrollup:
 lda menustate
 and #$f0
 sta menustate
-!if target = 128 {
-	jsr PreScroll
-	jsr $ff7d	;Print Immediate
-	!by $1d, $13	;right, home (fix pointers)
-	!by $1b, $57	;ESC, W (scroll down)
-	!by $13, $13	;home, home (restore full screen)
-	!by 0		;end of string
-} else {
+
 lda #<screen+(listbottomy-2)*ScreenCols+listx
 sta scrollupll
 lda #>screen+(listbottomy-2)*ScreenCols+listx
@@ -1900,7 +1886,7 @@ sbc #0
 sta scrolluplh
 dex
 bne --
-}
+
 jsr scrollcheckend      ; check if end
 lda #>tbl               ; check if selected = table first
 cmp selectedh
@@ -2105,6 +2091,7 @@ sty tmpptrh         ; tmpptr:h->load address
 !if drivechange = 1 {
 
 ;lda #0              ; clear dir entry (lda #0 for load is not required, A is 0 at this point)
+sta $9d
 ldy #128
 cleardir_loop:
 sta (tmpptr),y      ; clear dir entry
@@ -2321,207 +2308,6 @@ beq sort_00
 }
 
 
-!if target = 64 {
-!if variant = 2 {
-;C64-DTV
-
-;Copy the JiffyDOS detection & install routine
-
-jiffydtv_start:
-
-;DASM SYNTAX
-;#rorg loadrunpos
-
-;ACME SYNTAX
-!pseudopc loadrunpos {
-
-
-	jsr	check_for_jiffydtv_softkernal
-	
-	beq	load_JiffyDTV
-
-	jsr     active_JiffyDTV
-        rts
-
-        
-load_JiffyDTV:     ;load "JIFFYDTV" from flash if exist
-
-
-; Store current program on $6000 so it could be restored after the "JIFFYDTV" load.
-	LDX #$08      ; copy from F9-FA = $800 
-	LDY #$60      ;        to FB-FC = $6000 
-	jsr CopyBytes 
-
-
-
-	lda #1      ; filenr
-	ldx #1      ; unitnr
-	ldy #1      ; sec.address (,1)
-	jsr SETLFS
-
-	lda #8              ; a = filenamelen ("jiffydtv")
-	ldx #<jiffydtv_name
-	ldy #>jiffydtv_name ; x:y->filename address
-	jsr SETNAM
-
-
-	lda #0              ; A: 0 = Load, 1-255 = Verify
-        jsr LOAD
-
-        bcs JiffyDTV_LoadError  ; Carry: 0 = No errors, 1 = Error; 
-	
-	lda #$60
-	sta $0843         ; patch the JIFFY INSTALL code to avoid bank swap and reset
-
-        jsr $080d         ; and start the INSTALL JIFFY Routine
-
-	jsr active_JiffyDTV
-
-        jmp RestoreProgram
-
-JiffyDTV_LoadError:            
-;       lda #$02
-;       sta vicborder      ;   POKE 53280,02 (Red) 
-
-RestoreProgram:
-	LDX #$60      ; copy from F9-FA = $6000 
-	LDY #$08      ;        to FB-FC = $800 
-        
-	jsr CopyBytes ; Restore program.
-
-	rts
-
-
-active_JiffyDTV:
-	ldx #1
-	stx $d03f
-        LDA #$5E
-        STA $D100   ; $5E %01-011110 01=RAM 011110 = $1e  (kernal in RAM $1E0000)
-        LDA #$00
-        STA $D03F
-	JSR $FD15   ; set JiffyDOS pointers
-
-        ;JiffyDOS actived
-;       lda #$05
-;       sta vicborder   ;   POKE 53280,05 (Green) 
-	rts
-
-
-
-CopyBytes:
-	STX $FA     ; copy from/to FA-FC hi-byte
-	STY $FC
-
-	LDX #$20    ; blocks to copy ($20 = $2000 bytes)
-	LDY #$00    
-	STY $F9
-	STY $FB     ; copy from/to F9/FB lo-byte fixed 0
-
-
-CopyBytesLoop:
-	LDA ($F9),Y
-	STA ($FB),Y
-	INY
-	BNE CopyBytesLoop
-
-	INC $FA
-	INC $FC
-	DEX
-	BNE CopyBytesLoop
-        RTS
-
-
-
-jiffydtv_name:
-
-;DASM SYNTAX
-;	.byte "JIFFYDTV"
-
-;ACME SYNTAX	
-	!tx "jiffydtv"
-
-
-
-
-;**************************************************************************
-;*
-;* NAME  check_for_kernal (based on DTVmenu from tlr) 
-;*
-;* DESCRIPTION
-;*   Check if there is a kernal present at $1ee000.
-;*   z=1, means no kernal
-;*
-;******
-check_for_jiffydtv_softkernal:
-
-;	sir	$e8
-;DASM SYNTAX
-;	.byte $42,$e8           ;sir	$e8
-;ACME SYNTAX	
-        !by   $42,$e8           ;sir	$e8
-
-	ldy	#$1ee000/$4000
-	ldx	#%01010101	;all ram
-;	sir	$12
-;DASM SYNTAX
-;	.byte $42,$12           ;sir	$12
-;ACME SYNTAX	
-        !by   $42,$12           ;sir	$12
-
-
-	
-       
-
-
-; is the vectors all $ff's?
-	ldx	#5
-	lda	#$ff
-
-
-	ldy $bd4c
-        cpy #$a5
-        bne check_kernal_exit  ;fd4c  a5 f4 (JIFFYDOS load Address pointers in ROM lo-byte)
-
-	ldy $bd4d
-        cpy #$f4
-        bne check_kernal_exit  ;fd4c  a5 f4 (JIFFYDOS load Address pointers in ROM hi-byte)
-
-
-cfk_lp1:                       ; check also some vectors to be sure they are not all $ff 
-	and	$bffa,x
-	dex
-	bpl	cfk_lp1
-
-check_kernal_exit:
-
-;	sir	$e8
-;DASM SYNTAX
-;	.byte $42,$e8           ;sir	$e8
-;ACME SYNTAX	
-        !by   $42,$e8           ;sir	$e8
-
-	ldy	#$02
-	ldx	#%01010101	;all ram
-;	sir	$12
-;DASM SYNTAX
-;	.byte $42,$12           ;sir	$12
-;ACME SYNTAX	
-        !by   $42,$12           ;sir	$12
-
-	cmp	#$ff		;Z=1 is all $ff's.
-	rts
-;DASM SYNTAX
-;#rend
-
-;ACME SYNTAX (Close code #rorg for loadrunpos[$0334])
-}
-
-jiffydtv_end:
-
-}
-}
-
-
 ; --- Variables
 
 ; device number (8,9,...)
@@ -2722,7 +2508,7 @@ tbl
 tblbaseend
 
 
-!if target = 64 & variant = 3 {
+!if variant = 3 {
 
 
 end !by 0

@@ -8,9 +8,7 @@ target = 64	; choose the target system
 		;128 = Commodore 128 (Not implemented yet)
 
 		; Select a variant according with target system 
-variant = 0     ; 0 = None, Standard System.
-                ; 1 = Vic-20 with Mega-Cart
-                ; 2 = C64 Direct-to-TV
+variant = 3     ; 0 = None, Standard System.
 				; 3 = COMAL 80 C64
 
                 ; device number 
@@ -44,6 +42,10 @@ startmode = 1   ; start mode for selected programs (C16/C64 meaning)
                 ; 0 = fixed LOAD"FILE",8,1 + RUN (old method, small program size)
 		; 1 = LOAD"FILE",8,1 + RUN  (by pressing key_fire or Joy button)
 		;     LOAD"FILE",8 + RUN (by holding CBM while pressing key_fire or Joy button)
+		
+rom = 1		; comal rommed packages cannot be discarded, or saved with comal programs, use this option	
+				; to keep the package in memory, THIS IS DIFFERENT THAN EPROM !!
+				; 0 = not rommed, can be discarded and save with comal programs, see sdtools_load
 
 ; - functionality (0/1)
 minimal = 0         ; remove all extra features for smallest prg size

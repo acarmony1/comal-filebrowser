@@ -37,10 +37,10 @@ echo.
 echo Compiling CBM FileBrowser for: 
 echo 1 - C64
 echo.
-echo acme --cpu 6502 -f cbm -o fb64.prg c64.asm
+echo acme --cpu 6510 -f cbm -o fb64.prg c64.asm
 echo.
 
-acme --cpu 6502 -f cbm -o fb64.prg c64.asm
+acme --cpu 6510 -f cbm -o fb64.prg c64.asm
 
 if not %errorlevel%==0 goto :error
 
@@ -67,10 +67,10 @@ echo.
 echo Compiling CBM FileBrowser for: 
 echo 2 - C64 Comal
 echo.
-echo acme --cpu 6502 -f cbm -o sdtools-comal.prg c64comal.asm
+echo acme --cpu 6510 -f cbm -o sdtools-comal.prg c64comal.asm
 echo.
 
-acme --cpu 6502 -f cbm -o sdtools-comal.prg c64sdtools.asm
+acme --cpu 6510 -f cbm -o sdtools-comal.prg c64sdtools.asm
 
 if not %errorlevel%==0 goto :error
 
