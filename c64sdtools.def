@@ -40,6 +40,9 @@ startmode = 1   ; start mode for selected programs (C16/C64 meaning)
                 ; 0 = fixed LOAD"FILE",8,1 + RUN (old method, small program size)
 		; 1 = LOAD"FILE",8,1 + RUN  (by pressing key_fire or Joy button)
 		;     LOAD"FILE",8 + RUN (by holding CBM while pressing key_fire or Joy button)
+;rom			= 0		; disable rommed version for comal
+rom			= 1		; enable rommed version for comal
+
 
 ; - functionality (0/1)
 minimal = 0        ; remove all extra features for smallest prg size
@@ -53,7 +56,7 @@ disknameena = 1
 statusenabl = 1
 pleasewaite = 1
 sortdir     = 0
-rom			= 0		; disable rommed version for comal
+
 } else {
 rememberpos = 1	    ; remember position on previous directory
 showcursors = 1     ; show cursors
@@ -64,7 +67,7 @@ disknameena = 1     ; enable disk name printing
 statusenabl = 1     ; enable status printing
 pleasewaite = 1     ; enable "please wait" printing
 sortdir     = 1     ; enable sort dir function by using the key_sort
-rom			= 0		; enable rommed version for comal
+
 }
 
 
