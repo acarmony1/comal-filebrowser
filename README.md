@@ -37,7 +37,12 @@ load "sdtools"      <-- This is a standalone Comal program that have USE SDTOOLS
 
 makeobjfile.prg     <-- This file will create a SEQ package file (that you need if you compile this yourself EQ fb64comal >> pkg.sdtools), simply load and run from comal, enter the file (EQ fb64comal created from above) and output file >> whatever you want to call it. Traditionally all Comal Packages were formated with PKG. in front.
 
-.3/09/2021
+3/31/2021
+
+Now FB does not show loading message (sta #$9d). There is an error in the c64def, it cannot calculate ROMMED and non ROMMED versions. All versions included in release (R) for rommed verions (NR) not rommed
+
+
+3/09/2021
 
 Added version, (currently V.03). Fixed the color  to normal colors (colorenable = 0)
 
